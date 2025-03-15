@@ -36,6 +36,7 @@
 #include "posix/bindir.hh"
 
 // rasterlib
+#include "raster/clut.hh"
 #include "raster/raster.hh"
 
 // v68k-cursor
@@ -180,6 +181,10 @@ int run_event_loop( const raster::raster_load& load, const raster::raster_desc& 
 			switch ( pearl_event->code )
 			{
 				case kEventPearlScreenBits:
+					continue;
+
+				case kEventPearlCLUTBits:
+					blitter.update_clut( find_clut( &load.meta->note ) );
 					continue;
 
 				case kEventPearlScaleMultiple:

@@ -9,6 +9,9 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 
+// rasterlib
+#include "raster/clut_detail.hh"
+
 
 namespace Pearl
 {
@@ -132,27 +135,10 @@ bool Blitter::prep( int stride, int width, int height, int depth )
 		return false;
 	}
 
-	if ( SDL_ISPIXELFORMAT_INDEXED( pix_fmt ) )
+	// Default to monochrome if no CLUT is present.
+	if ( ! update_clut( NULL ) )
 	{
-		int entry_count = 1 << depth;
-		src_palette = SDL_AllocPalette( entry_count );
-
-		int step_size = 0x100 / ( entry_count - 1 );
-		SDL_Color colors[ entry_count ];
-
-		for ( int i = 1; i < entry_count; ++i )
-		{
-			const Uint8 value = step_size * ( i - 1 );
-			colors[ entry_count - i ] = { value, value, value, 0xFF };
-		};
-
-		colors[ 0 ] = { 0xFF, 0xFF, 0xFF, 0xFF };
-
-		if ( SDL_SetPaletteColors( src_palette, colors, 0, entry_count ) != 0  ||
-		     SDL_SetSurfacePalette( src_surface, src_palette ) != 0 )
-		{
-			return false;
-		}
+		return false;
 	}
 
 	dst_surface = SDL_CreateRGBSurfaceWithFormatFrom( NULL, w, h, 32, w * (32 / 8), texture_format );
@@ -269,6 +255,60 @@ bool Blitter::toggle_integer_scaling()
 	prefer_integer_scaling = ! prefer_integer_scaling;
 
 	return represent( prefer_integer_scaling );
+}
+
+bool Blitter::update_clut( const raster::clut_data* clut )
+{
+	int entry_count = 0;
+	SDL_Color* colors = NULL;
+
+	if ( clut )
+	{
+		entry_count = clut->max + 1;
+		colors = (SDL_Color*) alloca( entry_count * sizeof( SDL_Color ) );
+
+		for ( int i = 0; i < entry_count; ++i )
+		{
+			colors[ i ] = {
+				(Uint8) ( clut->palette[ i ].red   >> 8 ),
+				(Uint8) ( clut->palette[ i ].green >> 8 ),
+				(Uint8) ( clut->palette[ i ].blue  >> 8 ),
+				0xFF
+			};
+		}
+	}
+	else if ( SDL_ISPIXELFORMAT_INDEXED( pix_fmt ) )
+	{
+		entry_count = 1 << SDL_BITSPERPIXEL( pix_fmt );
+		colors = (SDL_Color*) alloca( entry_count * sizeof( SDL_Color ) );
+
+		int step_size = 0x100 / ( entry_count - 1 );
+
+		for ( int i = 1; i < entry_count; ++i )
+		{
+			const Uint8 value = step_size * ( i - 1 );
+
+			colors[ entry_count - i ] = { value, value, value, 0xFF };
+		};
+
+		colors[ 0 ] = { 0xFF, 0xFF, 0xFF, 0xFF };	
+	}
+
+	if ( colors )
+	{
+		if ( src_palette == NULL )
+		{
+			src_palette = SDL_AllocPalette( entry_count );
+		}
+
+		if ( SDL_SetPaletteColors( src_palette, colors, 0, entry_count ) != 0  ||
+		     SDL_SetSurfacePalette( src_surface, src_palette ) != 0 )
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool Blitter::save( const char* path )

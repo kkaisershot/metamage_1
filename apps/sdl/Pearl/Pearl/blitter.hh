@@ -9,9 +9,14 @@
 // libsdl2
 #include <SDL2/SDL_render.h>
 
+// rasterlib
+#include "raster/clut.hh"
+
 
 namespace Pearl
 {
+
+using raster::clut_data;
 
 class Blitter
 {
@@ -36,6 +41,8 @@ class Blitter
 		static bool size( int width, int height );
 
 		static bool toggle_integer_scaling();
+
+		static bool update_clut( const clut_data* clut );
 
 		static bool save( const char* path );
 };

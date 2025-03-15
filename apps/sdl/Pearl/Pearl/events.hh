@@ -26,13 +26,14 @@ enum
 	kEventPearlUpdate = 1,
 	kEventPearlScreenBits = 2,
 	kEventPearlCursorBits = 3,
+	kEventPearlCLUTBits = 4,
 
-	kEventPearlScaleMultiple = 4,
-	kEventPearlIntegerScale = 5,
-	kEventPearlFullscreen = 6,
-	kEventPearlKeyboardGrab = 7,
-	kEventPearlMouseGrab = 8,
-	kEventPearlScreenShot = 9,
+	kEventPearlScaleMultiple = 5,
+	kEventPearlIntegerScale = 6,
+	kEventPearlFullscreen = 7,
+	kEventPearlKeyboardGrab = 8,
+	kEventPearlMouseGrab = 9,
+	kEventPearlScreenShot = 10,
 };
 
 bool handle_sdl_event( SDL_Event& event, Cursor& cursor );
