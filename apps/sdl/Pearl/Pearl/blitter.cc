@@ -271,4 +271,14 @@ bool Blitter::toggle_integer_scaling()
 	return represent( prefer_integer_scaling );
 }
 
+bool Blitter::save( const char* path )
+{
+	if ( path == NULL  ||  dst_surface == NULL )
+	{
+		return false;
+	}
+
+	return SDL_SaveBMP( dst_surface, path ) == 0;
+}
+
 }

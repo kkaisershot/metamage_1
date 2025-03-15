@@ -32,6 +32,7 @@ enum
 	kEventPearlFullscreen = 6,
 	kEventPearlKeyboardGrab = 7,
 	kEventPearlMouseGrab = 8,
+	kEventPearlScreenShot = 9,
 };
 
 bool handle_sdl_event( SDL_Event& event, Cursor& cursor );

@@ -162,6 +162,9 @@ int run_event_loop( const raster::raster_load& load, const raster::raster_desc& 
 	Cursor cursor( cursor_limit, initial_cursor_location, blitter );
 	cursor.set_composite_mode( Cursor::CompositeMode_host_OS );
 
+	int screenshot_index = 0;
+	char screenshot_path[ 255 ];
+
 	bool running = true;
 	SDL_Event event;
 	while ( running )
@@ -198,6 +201,17 @@ int run_event_loop( const raster::raster_load& load, const raster::raster_desc& 
 
 				case kEventPearlMouseGrab:
 					window.toggle_mouse_grab();
+					continue;
+
+				case kEventPearlScreenShot:
+					if ( snprintf( screenshot_path,
+					               sizeof ( screenshot_path ),
+					               "%s/screen_%d.bmp",
+					               SDL_GetBasePath(),
+					               screenshot_index++ ) < sizeof ( screenshot_path ) )
+					{
+						blitter.save( screenshot_path );
+					}
 					continue;
 
 				default:

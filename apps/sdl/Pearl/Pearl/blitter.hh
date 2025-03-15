@@ -36,6 +36,8 @@ class Blitter
 		static bool size( int width, int height );
 
 		static bool toggle_integer_scaling();
+
+		static bool save( const char* path );
 };
 
 }

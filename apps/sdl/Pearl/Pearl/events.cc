@@ -124,6 +124,7 @@ bool handle_command( const SDL_KeyboardEvent& event )
 	const Sint32        fullScreen    = kEventPearlFullscreen;
 	const Sint32        keyboardGrab  = kEventPearlKeyboardGrab;
 	const Sint32        mouseGrab     = kEventPearlMouseGrab;
+	const Sint32        screenShot    = kEventPearlScreenShot;
 
 	switch ( event.keysym.scancode )
 	{
@@ -166,6 +167,13 @@ bool handle_command( const SDL_KeyboardEvent& event )
 			SDL_UserEvent mouse_grab = { eventClass };
 			mouse_grab.code = mouseGrab;
 			return SDL_PushEvent( (SDL_Event*) &mouse_grab );
+		}
+
+		case SDL_SCANCODE_S:
+		{
+			SDL_UserEvent screen_shot = { eventClass };
+			screen_shot.code = screenShot;
+			return SDL_PushEvent( (SDL_Event*) &screen_shot );
 		}
 
 		default:
