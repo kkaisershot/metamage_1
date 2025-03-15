@@ -98,8 +98,27 @@ bool Blitter::prep( int stride, int width, int height, int depth )
 	switch ( depth )
 	{
 		case 1:
-			// only monochrome is supported for now
 			pix_fmt = SDL_PIXELFORMAT_INDEX1MSB;
+			break;
+
+		case 2:
+			pix_fmt = SDL_PIXELFORMAT_INDEX2MSB;
+			break;
+
+		case 4:
+			pix_fmt = SDL_PIXELFORMAT_INDEX4MSB;
+			break;
+
+		case 8:
+			pix_fmt = SDL_PIXELFORMAT_INDEX8;
+			break;
+
+		case 16:
+			pix_fmt = SDL_PIXELFORMAT_XRGB1555;
+			break;
+
+		case 32:
+			pix_fmt = SDL_PIXELFORMAT_XRGB8888;
 			break;
 
 		default:
@@ -113,18 +132,27 @@ bool Blitter::prep( int stride, int width, int height, int depth )
 		return false;
 	}
 
-	src_palette = SDL_AllocPalette( 2 );
-
-	SDL_Color colors[ 2 ] =
+	if ( SDL_ISPIXELFORMAT_INDEXED( pix_fmt ) )
 	{
-		{ 0xFF, 0xFF, 0xFF, 0xFF },
-		{ 0x00, 0x00, 0x00, 0xFF }
-	};
+		int entry_count = 1 << depth;
+		src_palette = SDL_AllocPalette( entry_count );
 
-	if ( SDL_SetPaletteColors( src_palette, colors, 0, 2 ) != 0  ||
-	     SDL_SetSurfacePalette( src_surface, src_palette ) != 0 )
-	{
-		return false;
+		int step_size = 0x100 / ( entry_count - 1 );
+		SDL_Color colors[ entry_count ];
+
+		for ( int i = 1; i < entry_count; ++i )
+		{
+			const Uint8 value = step_size * ( i - 1 );
+			colors[ entry_count - i ] = { value, value, value, 0xFF };
+		};
+
+		colors[ 0 ] = { 0xFF, 0xFF, 0xFF, 0xFF };
+
+		if ( SDL_SetPaletteColors( src_palette, colors, 0, entry_count ) != 0  ||
+		     SDL_SetSurfacePalette( src_surface, src_palette ) != 0 )
+		{
+			return false;
+		}
 	}
 
 	dst_surface = SDL_CreateRGBSurfaceWithFormatFrom( NULL, w, h, 32, w * (32 / 8), texture_format );
