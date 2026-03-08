@@ -39,7 +39,12 @@ class Window
 		Window& operator=( const Window& );
 
 	public:
-		Window( const char* title, uint32_t screen_width, uint32_t screen_height, uint32_t window_width = 0, uint32_t window_height = 0 );
+		Window( const char* title,
+				uint32_t    screen_width,
+				uint32_t    screen_height,
+				uint32_t    window_width = 0,
+				uint32_t    window_height = 0,
+				bool        fullscreen = true );
 		~Window();
 
 		operator SDL_Window*() const;

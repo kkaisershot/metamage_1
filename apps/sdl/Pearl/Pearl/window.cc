@@ -21,19 +21,22 @@
 namespace Pearl
 {
 
+static const SDL_WindowFlags fullscreen_flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+
 Window::Window( const char* title,
-                uint32_t screen_width,
-                uint32_t screen_height,
-                uint32_t window_width,
-                uint32_t window_height ) : screen_w( screen_width ),
-                                           screen_h( screen_height )
+				uint32_t screen_width,
+				uint32_t screen_height,
+				uint32_t window_width,
+				uint32_t window_height,
+				bool fullscreen ) : screen_w( screen_width ),
+									screen_h( screen_height )
 {
 	window = SDL_CreateWindow( title,
 	                           SDL_WINDOWPOS_UNDEFINED,
 	                           SDL_WINDOWPOS_UNDEFINED,
 	                           window_width  ? window_width  : screen_width,
 	                           window_height ? window_height : screen_height,
-	                           SDL_WINDOW_RESIZABLE );
+	                           fullscreen ? fullscreen_flags : SDL_WINDOW_RESIZABLE );
 
 	if ( window != NULL )
 	{
@@ -109,7 +112,7 @@ bool Window::toggle_fullscreen()
 	{
 		SDL_GetWindowSize( window, &windowed_w, &windowed_h );
 		SDL_GetWindowPosition( window, &windowed_x, &windowed_y );
-		return SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP ) == 0;
+		return SDL_SetWindowFullscreen( window, fullscreen_flags ) == 0;
 	}
 
 	return false;
