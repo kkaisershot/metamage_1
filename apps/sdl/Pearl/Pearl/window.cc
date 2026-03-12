@@ -21,6 +21,13 @@
 namespace Pearl
 {
 
+static const uint32_t window_flags =
+	0
+#if PEARL_RESIZABLE
+	| SDL_WINDOW_RESIZABLE
+#endif
+	;
+
 Window::Window( const char* title,
                 uint32_t screen_width,
                 uint32_t screen_height,
@@ -33,7 +40,7 @@ Window::Window( const char* title,
 	                           SDL_WINDOWPOS_UNDEFINED,
 	                           window_width  ? window_width  : screen_width,
 	                           window_height ? window_height : screen_height,
-	                           SDL_WINDOW_RESIZABLE );
+	                           window_flags );
 
 	if ( window != NULL )
 	{

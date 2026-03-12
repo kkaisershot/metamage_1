@@ -10,6 +10,9 @@
 #include "frend/make_raster.hh"
 
 
+#define PEARL_RESIZABLE  1
+
+
 struct SDL_Window;
 
 namespace Pearl
